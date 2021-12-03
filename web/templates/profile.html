@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+      </head>
+      <body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Update User info!<h1>
+            <form action="/update" method="post">
+                <input type="text" name="newName" placeholder="New name">
+                <input type="text" name="action" value="1" hidden>
+                <input type="submit">
+            </form>
+            <form action="/update" method="post">
+                <input type="text" name="oldPassword" placeholder="old password">
+                <input type="text" name="newPassword" placeholder="new password">
+                <input type="text" name="action" value="2" hidden>
+                <input type="submit">
+            </form>
+            <a href="logout"><button>Logout!</button></a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

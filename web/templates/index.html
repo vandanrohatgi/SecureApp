@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+      </head>
+      <body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <form action="/login" class="box" method="post">
+                    <h1>Login</h1>
+                     <input type="text" name="username" placeholder="Username"> 
+                     <input type="password" name="password" placeholder="Password">
+                     <input type="submit" name="" value="Login">
+                </form>
+                <div class="col-md-12">
+                    <p>{{ error }}</p>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
