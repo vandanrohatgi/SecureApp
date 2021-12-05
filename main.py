@@ -24,7 +24,6 @@ def before_request():
 def login():
     if request.method == 'POST':
         session.pop('user', None)
-
         username = request.form.get('username')
         password = request.form.get('password')
         record=db.query(username)
@@ -61,7 +60,31 @@ def update():
         return redirect(url_for('login'))
     if request.method=='POST':
         action=request.form.get('action')
-        
+        try:
+            if int(action)==1:
+                newName=request.form.get('newName')
+                if not re.search("^[a-zA-Z0-9]*$",newName):
+                    return ("No naughty characters please",500)
+                try:
+                    db.updateData(oldName=session['user'],newName=newName)
+                except:
+                    return "Something went wrong while updating database",500
+            elif int(action)==2:
+                oldPassword=None
+                newPassword=None
+                oldPassword=request.form.get('oldPassword')
+                newPassword=request.form.get('newPassword')
+                if oldPassword and newPassword:
+                    try:
+                        db.updateData(oldName=session['user'],oldPassword=oldPassword,newPassword=newPassword)
+                    except:
+                        return "error",500
+                else:
+                    return render_template('profile.html',error="Both passwords please!")
+            else:
+                return render_template('profile.html',error="You shouldn't have tampered with that. Security services are on their way...")
+        except:
+            return 'Oh no! what did you do?!', 500
     else:
         return redirect(url_for('profile'))
 
