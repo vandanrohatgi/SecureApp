@@ -21,23 +21,24 @@ class database():
 
     def updateData(self,oldName=None,newName=None,oldPassword=None,newPassword=None):
         if newName and self.query(oldName):
-            try:
-                self.collection.update_one(filter={'username':oldName},update={"$set":{'username':newName}})
-            except:
-                raise "Error while updating database"
-        if oldPassword:
-            try:
-                current=self.query(oldName)['password']
-                correct=check_password_hash(current,generate_password_hash(oldPassword))
-                if correct:
-                    self.collection.update_one(filter={'username':oldName},update={"$set":{'password':generate_password_hash(newPassword)}})
-                else:
-                    raise Exception
-            except:
-                raise "Error while updating database"
+            self.collection.update_one(filter={'username':oldName},update={"$set":{'username':newName}})
+            return 200,"success!"
+        
+        if newPassword and oldPassword:
+            current=self.query(oldName)['password']
+            correct=check_password_hash(current,oldPassword)
+            if correct:
+                self.collection.update_one(filter={'username':oldName},update={"$set":{'password':generate_password_hash(newPassword)}})
+                return 200,"success!"
+            else:
+                return (500,"Old password incorrect")
+        elif newPassword and not oldPassword:
+            return(500,"Old password required")
+        elif oldPassword and not newPassword:
+            return(500,"New password required")
    
     def register(user,password,self):
         pass
 
-obj=database()
-print(obj.query("adin"))
+#obj=database()
+#print(obj.query("adin"))

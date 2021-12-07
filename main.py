@@ -6,7 +6,7 @@ from werkzeug.security import check_password_hash
 
 
 app=Flask(__name__,static_url_path='',static_folder='web/static',template_folder='web/templates')
-app.secret_key=os.urandom(12)
+app.secret_key=os.urandom(12) 
 app.env="development"
 app.debug=True
 
@@ -27,7 +27,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         record=db.query(username)
-        if record['username'] and check_password_hash(record['password'],password):
+        if record!=None and check_password_hash(record['password'],password):
             session['user']=username
             return redirect(url_for('welcome'))
         return render_template('index.html',error="Username and/or password incorrect")
@@ -64,27 +64,25 @@ def update():
             if int(action)==1:
                 newName=request.form.get('newName')
                 if not re.search("^[a-zA-Z0-9]*$",newName):
-                    return ("No naughty characters please",500)
+                    return ("Only alphabets and numbers please!",500)
                 try:
-                    db.updateData(oldName=session['user'],newName=newName)
+                    status,message=db.updateData(oldName=session['user'],newName=newName)
+                    session['user']=newName
+                    return render_template('profile.html',message=message),status
                 except:
                     return "Something went wrong while updating database",500
             elif int(action)==2:
-                oldPassword=None
-                newPassword=None
                 oldPassword=request.form.get('oldPassword')
                 newPassword=request.form.get('newPassword')
-                if oldPassword and newPassword:
-                    try:
-                        db.updateData(oldName=session['user'],oldPassword=oldPassword,newPassword=newPassword)
-                    except:
-                        return "error",500
-                else:
-                    return render_template('profile.html',error="Both passwords please!")
+                try:
+                    status,message=db.updateData(oldName=session['user'],oldPassword=oldPassword,newPassword=newPassword)
+                    return render_template('profile.html',message=message),status
+                except:
+                    return  "Something went wrong while updating database",500
             else:
-                return render_template('profile.html',error="You shouldn't have tampered with that. Security services are on their way...")
+                return render_template('profile.html',error="You shouldn't have tampered with that. Security services are on their way..."),500
         except:
-            return 'Oh no! what did you do?!', 500
+            return 'It wasn\'t me...what did you do?!', 500
     else:
         return redirect(url_for('profile'))
 
